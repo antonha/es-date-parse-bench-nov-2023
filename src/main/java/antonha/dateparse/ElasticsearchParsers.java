@@ -86,4 +86,14 @@ public class ElasticsearchParsers {
     static TemporalAccessor doParse(String string) {
         return (TemporalAccessor) STRICT_DATE_OPTIONAL_TIME_FORMATTER.toFormat().parseObject(string, new ParsePosition(0));
     }
+
+    /**
+     * Example for being able to run this code in a profiler.
+     */
+    static TemporalAccessor parsed = null;
+    public static void main(String[] args) {
+        while (true) {
+            parsed = doParse("2023-01-01T23:38:34.000Z");
+        }
+    }
 }
