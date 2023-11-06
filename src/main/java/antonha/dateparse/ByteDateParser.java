@@ -15,6 +15,7 @@
 package antonha.dateparse;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
@@ -26,27 +27,29 @@ public class ByteDateParser {
         int year = byteToInt(bytes[0]) * 1000 + byteToInt(bytes[1]) * 100 + byteToInt(bytes[2]) * 10 + byteToInt(bytes[3]);
         int month = byteToInt(bytes[5]) * 10 + byteToInt(bytes[6]);
         int day = byteToInt(bytes[8]) * 10 + byteToInt(bytes[9]);
-        int hour = 0, minute = 0, second = 0, millis = 0;
+        // T
         if (bytes.length > 10 && bytes[10] == 0x54) {
-            // T
-            hour = byteToInt(bytes[11]) * 10 + byteToInt(bytes[12]);
-            minute = byteToInt(bytes[14]) * 10 + byteToInt(bytes[15]);
-            second = byteToInt(bytes[17]) * 10 + byteToInt(bytes[18]);
+            int hour = byteToInt(bytes[11]) * 10 + byteToInt(bytes[12]);
+            int minute = byteToInt(bytes[14]) * 10 + byteToInt(bytes[15]);
+            int second = byteToInt(bytes[17]) * 10 + byteToInt(bytes[18]);
+            int millis = 0;
             if (bytes[19] == 0x2E) {
                 millis = byteToInt(bytes[20]) * 100 + byteToInt(bytes[21]) * 10 + byteToInt(bytes[22]);
             }
+            return ZonedDateTime.of(
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    millis * 1_000_000,
+                    ZoneOffset.UTC
+            );
+        } else {
+            return LocalDate.of(year, month, day);
         }
 
-        return ZonedDateTime.of(
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                second,
-                millis * 1_000_000,
-                ZoneOffset.UTC
-        );
     }
 
     private static int byteToInt(byte b) {
