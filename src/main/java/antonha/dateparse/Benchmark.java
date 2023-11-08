@@ -52,7 +52,8 @@ public class Benchmark {
     private static final Pattern pattern = Pattern.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]){2}.?([0-9]+)Z");
 
     /*
-     * Not complete, will only work for ISO-8601 datetimes with milli precision and UTC timezone. Provided as a reference.
+     * Not complete, will only work for ISO-8601 datetimes with milli precision and UTC timezone.
+     * Provided as a reference for speed.
      */
     @org.openjdk.jmh.annotations.Benchmark
     public TemporalAccessor benchRegex() {
@@ -72,18 +73,13 @@ public class Benchmark {
 //
 
     /*
-    This should parse the same as
+    Not complete, here as a reference for roughly how fast Instant.parse() is.
      */
     @org.openjdk.jmh.annotations.Benchmark
     public TemporalAccessor benchInstantParse() {
         return Instant.parse(dateString);
     }
 //
-    @org.openjdk.jmh.annotations.Benchmark
-    public TemporalAccessor testByteParser() {
-        return ByteDateParser.parse(dateString);
-    }
-
     @org.openjdk.jmh.annotations.Benchmark
     public TemporalAccessor testCharParser() {
         return CharDateParser.parse(dateString);

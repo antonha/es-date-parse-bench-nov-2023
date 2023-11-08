@@ -1,2 +1,2 @@
-mvn clean verify
+mvn clean verify -DskipTests=true
 java -jar target/benchmarks.jar
