@@ -20,6 +20,12 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
 
+/**
+ * Date parser which is based on byte arrays to demonstrate that it is possible to parse dates faster than the Java
+ * parsers.
+
+ * -- THIS CODE IS NOT ONLY A DEMONSTRATION AND SHOULD NOT BE USED IN PRODUCTION --
+ */
 public class ByteDateParser {
 
     public static TemporalAccessor parse(String dateString) {
