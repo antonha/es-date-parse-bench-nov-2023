@@ -30,6 +30,7 @@ import java.time.temporal.TemporalQueries;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -47,9 +48,25 @@ class CharDateParserTest {
         "2023-01-01T06:16:12.542Z",
         "2023-01-01T06:16:12Z",
         "2023-01-01Z",
-        "2023-01-01"
+        "2023-01-01",
 
-    ).map(dateString -> DynamicTest.dynamicTest(dateString, () -> {
+        //You could argue that some of these are not valid, but let's make sure that we parse the same as ES
+        "",
+        "fish",
+        "3000 cats",
+        "3000-ab",
+        "3000-01-ab",
+        "3000-01-01Taa",
+        "3000-01-01T0a",
+        //This could be interpreted as either an invalid time of "urkey" or as the valid TZ "Turkey"
+        "3000-01-01Turkey",
+        "3000-01-01T01:ab",
+        "3000-01-01T01:01:ab",
+        "3000-01-01T01:01:01.ab",
+        "3000-01-01T01:01:01.12abCET",
+        "3000-01-01T01:01:01Z is a date"
+
+    ).map(dateString -> DynamicTest.dynamicTest(String.format("str: '%s'", dateString), () -> {
       Instant esParsed = toInstant(ElasticsearchParsers.doParse(dateString));
       Instant bytesParsed = toInstant(CharDateParser.parse(dateString));
       assertEquals(esParsed, bytesParsed);
@@ -129,6 +146,9 @@ class CharDateParserTest {
       .toList();
 
   static Instant toInstant(TemporalAccessor tmp) {
+    if (tmp == null) {
+      return null;
+    }
     var local = localDateTime(tmp);
     var zone = tmp.query(TemporalQueries.zone());
     if (zone != null) {
