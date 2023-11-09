@@ -81,7 +81,7 @@ public class Benchmark {
     }
 //
     @org.openjdk.jmh.annotations.Benchmark
-    public TemporalAccessor testCharParser() {
+    public TemporalAccessor benchCharParser() {
         return CharDateParser.parse(dateString);
     }
 
