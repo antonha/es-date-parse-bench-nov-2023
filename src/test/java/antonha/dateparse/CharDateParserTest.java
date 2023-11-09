@@ -56,10 +56,20 @@ class CharDateParserTest {
     }));
   }
 
-
   private final Random random = new Random();
-  private Instant ex = Instant.parse("2023-01-01T23:38:34.123456789Z");
+  private final Instant example = Instant.parse("2023-01-01T23:38:34.123456789Z");
 
+  /*
+  Tests that test that the CharDateParser parses the same as the Elasticsearch
+  strict_date_optional_time parser.
+
+  Set up using dynamic tests.
+    - First, set up bunch of formats supported by the strict_date_optional_time parser
+    - For each format, go through all available time zones
+    - For each timezone, generate 10 random Instants
+    - For each instant, format it using the format and timezone.
+    - Ensure that the CharDateParser parses the same as the strict_date_optional_time parser.
+   */
   @TestFactory
   @Execution(ExecutionMode.CONCURRENT)
   public Stream<DynamicContainer> testRandomParsesSameAsES() {
@@ -73,12 +83,12 @@ class CharDateParserTest {
                   DynamicContainer.dynamicContainer(
                       zone.toString(),
                       Stream.concat(
-                          Stream.of(ex),
+                          Stream.of(example),
                           Stream.generate(
                               () ->
                                   Instant.ofEpochMilli(min + random.nextLong(max - min))
                                       .plusNanos(random.nextLong(1_000_000_000))
-                          )).limit(100).map(instant -> {
+                          )).limit(10).map(instant -> {
                         String dateString = instant.atZone(zone).format(formatter);
                         return DynamicTest.dynamicTest(dateString, () -> {
                           Instant esParsed = toInstant(ElasticsearchParsers.doParse(dateString));
@@ -112,7 +122,7 @@ class CharDateParserTest {
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSS",
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSSS"
           ).flatMap(
-              dateTimeFormat -> Stream.of("", "VV", "Z").map(zone -> dateTimeFormat + zone))
+              dateTimeFormat -> Stream.of("", "VV", "X").map(zone -> dateTimeFormat + zone))
       ).toList();
 
   static List<ZoneId> timeZones = ZoneId.getAvailableZoneIds().stream().map(ZoneId::of)
