@@ -14,6 +14,7 @@
  */
 package antonha.dateparse;
 
+import com.ethlo.time.ITU;
 import org.openjdk.jmh.annotations.*;
 
 import java.time.Instant;
@@ -47,6 +48,11 @@ public class Benchmark {
     @org.openjdk.jmh.annotations.Benchmark()
     public TemporalAccessor benchESParse() {
         return ElasticsearchParsers.doParse(dateString);
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark()
+    public TemporalAccessor benchESStrictParse() {
+        return ElasticsearchParsers.doParseStrict(dateString);
     }
 
     private static final Pattern pattern = Pattern.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]){2}.?([0-9]+)Z");
@@ -83,6 +89,12 @@ public class Benchmark {
     @org.openjdk.jmh.annotations.Benchmark
     public TemporalAccessor benchCharParser() {
         return CharDateParser.parse(dateString);
+    }
+
+    //
+    @org.openjdk.jmh.annotations.Benchmark
+    public TemporalAccessor benchITUParser() {
+        return ITU.parseDateTime(dateString);
     }
 
 }

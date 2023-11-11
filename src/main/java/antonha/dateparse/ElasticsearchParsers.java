@@ -87,6 +87,32 @@ public class ElasticsearchParsers {
         return (TemporalAccessor) STRICT_DATE_OPTIONAL_TIME_FORMATTER.toFormat().parseObject(string, new ParsePosition(0));
     }
 
+    private static final DateTimeFormatter STRICT_HOUR_MINUTE_SECOND_FORMATTER = new DateTimeFormatterBuilder().appendValue(
+            HOUR_OF_DAY,
+            2,
+            2,
+            SignStyle.NOT_NEGATIVE
+        )
+        .appendLiteral(':')
+        .appendValue(MINUTE_OF_HOUR, 2, 2, SignStyle.NOT_NEGATIVE)
+        .appendLiteral(':')
+        .appendValue(SECOND_OF_MINUTE, 2, 2, SignStyle.NOT_NEGATIVE)
+        .toFormatter(Locale.ROOT)
+        .withResolverStyle(ResolverStyle.STRICT);
+
+    private static final DateTimeFormatter STRICT_DATE_FORMATTER = new DateTimeFormatterBuilder().append(STRICT_YEAR_MONTH_DAY_FORMATTER)
+        .appendLiteral('T')
+        .append(STRICT_HOUR_MINUTE_SECOND_FORMATTER)
+        .optionalStart()
+        .appendFraction(NANO_OF_SECOND, 1, 9, true)
+        .optionalEnd()
+        .toFormatter(Locale.ROOT)
+        .withResolverStyle(ResolverStyle.STRICT);
+
+    static TemporalAccessor doParseStrict(String string) {
+        return (TemporalAccessor) STRICT_DATE_FORMATTER.toFormat().parseObject(string, new ParsePosition(0));
+    }
+
     /**
      * Example for being able to run this code in a profiler.
      */
