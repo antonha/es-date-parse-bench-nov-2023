@@ -26,7 +26,8 @@ import java.time.temporal.TemporalAccessor;
  * Date parser which is based on charAt() to demonstrate that it is possible to parse dates faster than the Java
  * parsers.
 
- * Might be fine to use in prod - there are quite a lot of tests, and they seem to work.
+ * I'm not terribly proud of this code, but it is not that bad either. And it seems to work, based on tests. I would
+ * want some more eyes on it before using it in production, though.
  */
 public class CharDateParser {
 
@@ -46,7 +47,7 @@ public class CharDateParser {
         int year = charToInt(y0) * 1000 + y1 * 100 + y2 * 10 + y3;
 
 
-        //Month
+        //Month - first check if there are months
         if(dateString.length() == 4 || dateString.charAt(4) != '-') {
             return LocalDate.of(year, 1, 1);
         }
@@ -57,7 +58,7 @@ public class CharDateParser {
         }
         int month = m0 * 10 + m1;
 
-        //Day
+        //Day: first check if there are days
         if(dateString.length() == 7 || dateString.charAt(7) != '-') {
             return LocalDate.of(year, month, 1);
         }
@@ -68,7 +69,7 @@ public class CharDateParser {
         }
         int day = d0 * 10 + d1;
 
-        //Hour
+        //Hour: first check if there are hours
         if(dateString.length() == 10 || dateString.charAt(10) != 'T') {
             return LocalDate.of(year, month, day);
         }
@@ -79,7 +80,7 @@ public class CharDateParser {
         }
         int hour = h0 * 10 + h1;
 
-        //Minute
+        //Minute: first check if there are minutes
         if(dateString.length() == 13 || dateString.charAt(13) != ':') {
             return withZone(
                 year, month, day, hour, 0, 0, 0,
@@ -96,7 +97,7 @@ public class CharDateParser {
         }
         int minute = mi0 * 10 + mi1;
 
-        //Second
+        //Second: first check if there are seconds
         if(dateString.length() == 16 || dateString.charAt(16) != ':') {
             return withZone(
                 year, month, day, hour, minute, 0, 0,
@@ -113,12 +114,16 @@ public class CharDateParser {
         }
         int second = s0 * 10 + s1;
 
+        //Nanos: first check if there are second fractions
         if(dateString.length() == 19 || dateString.charAt(19) != '.') {
             return withZone(
                 year, month, day, hour, minute, second, 0,
                 dateString, 19
             );
         }
+
+        //Second fractions can be of length 1-9, so we first scan through them and then increase based on number
+        //of parsed digits
         int nanos = 0;
         int pos = 20;
         while (pos < dateString.length()) {
@@ -140,6 +145,7 @@ public class CharDateParser {
         );
     }
 
+    //Taking in the date string here with position, rather than a substring, lets us avoid allocating a new String.
     private static TemporalAccessor withZone(
         int year, int month, int day,
         int hour, int minute, int second, int nanos,
