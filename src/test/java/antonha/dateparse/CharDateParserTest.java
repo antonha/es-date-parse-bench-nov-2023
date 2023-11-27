@@ -50,6 +50,10 @@ class CharDateParserTest {
         "2023-01-01Z",
         "2023-01-01",
 
+        //Timezones
+        "2023-01-01T23:38:34.000-0300",
+        "2023-01-01T23:38:34.000+1200",
+
         //You could argue that some of these are not valid, but let's make sure that we parse the same as ES
         "",
         "fish",
@@ -139,7 +143,7 @@ class CharDateParserTest {
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSS",
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSSS"
           ).flatMap(
-              dateTimeFormat -> Stream.of("", "VV", "X").map(zone -> dateTimeFormat + zone))
+              dateTimeFormat -> Stream.of("", "VV", "X", "ZZZ").map(zone -> dateTimeFormat + zone))
       ).toList();
 
   static List<ZoneId> timeZones = ZoneId.getAvailableZoneIds().stream().map(ZoneId::of)
