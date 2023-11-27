@@ -46,6 +46,7 @@ class CharDateParserTest {
         "2023-01-01T23:38:34.000Z",
         "2023-01-01T06:16:12.000Z",
         "2023-01-01T06:16:12.542Z",
+        "2023-01-01T06:16:12,542Z",
         "2023-01-01T06:16:12Z",
         "2023-01-01Z",
         "2023-01-01",
@@ -137,7 +138,16 @@ class CharDateParserTest {
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSS",
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSS",
               "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSS",
-              "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSSS"
+              "uuuu-MM-dd'T'hh:mm:ss'.'SSSSSSSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','S",
+              "uuuu-MM-dd'T'hh:mm:ss','SS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSSSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSSSSSS",
+              "uuuu-MM-dd'T'hh:mm:ss','SSSSSSSSS"
           ).flatMap(
               dateTimeFormat -> Stream.of("", "VV", "X").map(zone -> dateTimeFormat + zone))
       ).toList();

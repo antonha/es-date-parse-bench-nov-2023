@@ -115,7 +115,7 @@ public class CharDateParser {
         int second = s0 * 10 + s1;
 
         //Nanos: first check if there are second fractions
-        if(dateString.length() == 19 || dateString.charAt(19) != '.') {
+        if(dateString.length() == 19 || (dateString.charAt(19) != '.' && dateString.charAt(19) != ',')) {
             return withZone(
                 year, month, day, hour, minute, second, 0,
                 dateString, 19
